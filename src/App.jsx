@@ -30,12 +30,51 @@ const initialProducts = [
 ];
 
 function App() {
+const [products,setProducts] = useState(initialProducts);
 
+const[rating,setRatings] = useState(new Array(products.length).fill(0));
+
+const handleRatingChange = (productId,newRating) => {
+  const updatedRatings = rating.map((ele,index)=>{
+        if(index===productId-1){
+          return newRating;
+        }else{
+          return ele;
+        }
+  })
+  localStorage.setItem("ratings-assignment-application",JSON.stringify(updatedRatings));
+  setRatings(updatedRatings);
+}
+
+useState(() => {
+  const storedRatings =JSON.parse(localStorage.getItem("ratings-assignment-application"));
+  if(!storedRatings){
+    localStorage.setItem("ratings-assignment-application",JSON.stringify(rating));
+  }
+  else{
+    setRatings(storedRatings);
+  }
+},[])
  
 
   return (
     <div>
-     {/* code here */}
+     <h1>All Products</h1>
+     {
+      products.map((product,index)=>(
+        <ProductCard
+          key={product.id}
+          productId={product.id}
+          name={product.name}
+          image={product.image}
+          description={product.description}
+          avgRating={product.avgRating}
+          totalRatings={product.totalRatings}
+          rating={rating[index]}
+          handleRatingChange={handleRatingChange}
+        />
+      ))
+     }
     </div>
   );
 }
